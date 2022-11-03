@@ -1,0 +1,242 @@
+﻿<Window x:Class="FinWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FinWPF"
+        Style="{DynamicResource CustomWindowStyle}"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        mc:Ignorable="d"
+        Title="金融数据终端平台" Height="768" Width="1366" x:Name="mainWnd" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" Icon="/87472_market_stock_icon.png">
+    <Window.Resources>
+        <local:BooleanReverseConvertor x:Key="BooleanReverseConvertor"/>
+        <DataTemplate x:Key="ListBoxItemTemplate1">
+            <Grid Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="{Binding Order}" ContentStringFormat="00" Foreground="Red" FontSize="20" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+                <Label Content="{Binding Symbol}" VerticalContentAlignment="Center" Grid.Column="1" Padding="0,0,0,0"/>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <theme:DataGridHeaderBorder Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" IsClickable="{TemplateBinding CanUserSort}" Padding="{TemplateBinding Padding}" SortDirection="{TemplateBinding SortDirection}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" SeparatorBrush="{TemplateBinding SeparatorBrush}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </theme:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StkDataGridRowStyle" TargetType="{x:Type DataGridRow}">
+            <Setter Property="Background" Value="#ff222222"/>
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+            <Setter Property="ValidationErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <TextBlock Foreground="Red" Margin="2,0,0,0" Text="!" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridRow}">
+                        <Border x:Name="DGR_Border" BorderThickness="0" SnapsToDevicePixels="True" Background="#ff222222">
+                            <SelectiveScrollingGrid>
+                                <SelectiveScrollingGrid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </SelectiveScrollingGrid.RowDefinitions>
+                                <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Foreground="#FFE8E5E5"/>
+                                <DataGridDetailsPresenter Grid.Column="1" Grid.Row="1" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Visibility="{TemplateBinding DetailsVisibility}"/>
+                            </SelectiveScrollingGrid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="DGR_Border" Value="#3fff8f66"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" TargetName="DGR_Border" Value="#8f8f3f3f"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsNewItem" Value="True">
+                    <Setter Property="Margin" Value="{Binding NewItemMargin, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StkDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border BorderBrush="#5f8f8000" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" Margin="-1" VerticalAlignment="Stretch">
+                            <Label SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" VerticalContentAlignment="Center" HorizontalContentAlignment="{TemplateBinding HorizontalAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#fff8f899"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StkDataGridColumnHeaderStyleCenter" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <theme:DataGridHeaderBorder BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsClickable="{TemplateBinding CanUserSort}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" Padding="5" SortDirection="{TemplateBinding SortDirection}" SeparatorBrush="{TemplateBinding SeparatorBrush}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" Background="#3f663333">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </theme:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StkDataGridColumnHeaderStyleRight" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <theme:DataGridHeaderBorder BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsClickable="{TemplateBinding CanUserSort}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" Padding="5" SortDirection="{TemplateBinding SortDirection}" SeparatorBrush="{TemplateBinding SeparatorBrush}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" Background="#3f663333">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </theme:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StkDataGridColumnHeaderStyleLeft" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <theme:DataGridHeaderBorder BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsClickable="{TemplateBinding CanUserSort}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" Padding="5" SortDirection="{TemplateBinding SortDirection}" SeparatorBrush="{TemplateBinding SeparatorBrush}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" Background="#3f663333">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </theme:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="61"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Button Content="启动tick保存" Width="120" HorizontalAlignment="Left" Margin="5,10,0,10" FontSize="16" IsEnabled="{Binding TickThread.Disabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="Button_Click" FontFamily="SimSun" Height="30"/>
+        <Button x:Name="btnStopSaving" Content="停止tick保存" Width="120" HorizontalAlignment="Left" Margin="125,10,0,10" FontSize="16" IsEnabled="{Binding TickThread.Disabled, Converter={StaticResource BooleanReverseConvertor}, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="BtnStopSaving_Click" FontFamily="SimSun" Height="30"/>
+        <Button x:Name="btnFetchAllL1" Content="拉取全市场L1" Width="120" Foreground="IndianRed" HorizontalAlignment="Left" Margin="245,10,0,10" FontSize="16" IsEnabled="{Binding TickThread.Disabled, Converter={StaticResource BooleanReverseConvertor}, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="btnFetchAllL1_Click"  FontFamily="SimSun" Height="30"/>
+        <Label Content="L2逐笔订阅股票列表（一行一个，如SH600000)" Margin="5,5,5,0" Grid.Row="1" VerticalAlignment="Top" FontSize="16" FontFamily="SimSun" BorderBrush="#FF938D8D" BorderThickness="1" HorizontalAlignment="Stretch"/>
+        <Button x:Name="btnStopL2" Content="停止L2订阅" Width="120" HorizontalAlignment="Left" Margin="245,10,0,10" FontSize="16" IsEnabled="{Binding RequestL2Disabled, Converter={StaticResource BooleanReverseConvertor}, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="BtnStopL2_Click" FontFamily="SimSun" Height="30" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Button x:Name="btnStartL2" Content="开启L2订阅" Width="120" HorizontalAlignment="Left" Margin="125,10,370,10" FontSize="16" IsEnabled="{Binding RequestL2Disabled, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="BtnStartL2_Click" FontFamily="SimSun" Height="30" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Button x:Name="btnSaveReqList" Content="保存列表" Width="120" HorizontalAlignment="Left" Margin="5,10,0,10" FontSize="16" Click="BtnSaveReqList_Click" FontFamily="SimSun" Grid.Row="1" VerticalAlignment="Bottom" Height="30"/>
+        <Button x:Name="btnStartSaveDealts" Content="启动逐笔保存" Width="120" HorizontalAlignment="Right" Margin="5,10,125,10" FontSize="16" IsEnabled="{Binding DealtThread.Disabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="BtnStartSaveDealts_Click" FontFamily="SimSun" Grid.Row="1" VerticalAlignment="Bottom" Height="30"/>
+        <Button x:Name="btnStopSavingDealts" Content="停止逐笔保存" Width="120" HorizontalAlignment="Right" Margin="125,10,5,10" FontSize="16" IsEnabled="{Binding DealtThread.Disabled, Converter={StaticResource BooleanReverseConvertor}, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" Click="BtnStopSavingDealts_Click" FontFamily="SimSun" Grid.Row="1" VerticalAlignment="Bottom" Height="30"/>
+        <Label Content="{Binding DzhClient.MktSnapshot.CurrTickSymbol, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" HorizontalAlignment="Right" Margin="0,18,300,15" VerticalAlignment="Center" Width="100" Background="#3F24C3E6" FontFamily="Courier New" VerticalContentAlignment="Center" Padding="3" FontSize="14" Height="28" BorderBrush="#FF302626" BorderThickness="1,1,0,1"/>
+        <Label Content="{Binding DzhClient.MktSnapshot.TotalTickCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" HorizontalAlignment="Right" Margin="0,18,200,15" VerticalAlignment="Center" Width="100" Background="#3FEDF71D" FontFamily="Courier New" VerticalContentAlignment="Center" Padding="5" FontSize="14" Height="28" BorderBrush="#FF494949" BorderThickness="0,1"/>
+        <Label Content="{Binding DzhClient.MktSnapshot.CurrZbSymbol, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" HorizontalAlignment="Right" Margin="0,18,100,15" VerticalAlignment="Center" Width="100" Background="#3F3624E6" FontFamily="Courier New" VerticalContentAlignment="Center" Padding="5" FontSize="14" Height="28" BorderBrush="#FF494949" BorderThickness="0,1"/>
+        <Label Content="{Binding DzhClient.MktSnapshot.TotalZbCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" HorizontalAlignment="Right" Margin="906,18,5,15" VerticalAlignment="Center" Width="100" Background="#3FF18B8B" FontFamily="Courier New" VerticalContentAlignment="Center" Padding="5" FontSize="14" Height="28" BorderBrush="#FF494949" BorderThickness="0,1,1,1"/>
+        <Button x:Name="btnRequestL2his" Content="请求当天逐笔" Width="120" HorizontalAlignment="Left" Margin="365,0,0,10" FontSize="16" Click="btnRequestL2his_Click"  FontFamily="SimSun" Height="30" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Button x:Name="btnCalcMainPower" Content="计算主力资金" Width="120" HorizontalAlignment="Left" Margin="485,0,0,10" FontSize="16" Click="btnCalcMainPower_Click" FontFamily="SimSun" Height="30" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Grid HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Margin="0,35,0,40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox TextWrapping="Wrap" Text="{Binding L2RequestList, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Top" AcceptsReturn="True" Padding="2" Margin="5" HorizontalAlignment="Stretch"/>
+
+            <Grid Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <DataGrid x:Name="_dataGridStocks" BorderBrush="#FF77412F" Background="#333333" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding CurrentComputeMgrList, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" d:ItemsSource="{d:SampleData ItemCount=5}" ItemStringFormat="G" AutoGeneratedColumns="DataGrid_AutoGeneratedColumns" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="2" Grid.ColumnSpan="2" Margin="5,5,5,5" CellStyle="{DynamicResource StkDataGridCellStyle}" ColumnHeaderStyle="{DynamicResource StkDataGridColumnHeaderStyleLeft}" RowStyle="{DynamicResource StkDataGridRowStyle}">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="补齐当日逐笔" Click="MenuItem_Click" />
+                            <MenuItem Header="加载本地数据" Click="MenuItem_Click_1" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+                <GridSplitter Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" Margin="5,0,5,0" Background="#8FF31A10"/>
+                <GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Margin="5,0,5,0" Background="#8FF31A10"/>
+                <TabControl Grid.Row="4" Grid.ColumnSpan="2" SelectedIndex="2" >
+                    <TabItem Header="个股预警池" Height="30" Width="120">
+                        <Grid Background="#FFE5E5E5">
+                            <DataGrid Background="#333333" BorderBrush="#FF77412F"  ItemsSource="{Binding CurrentComputeFielsList, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" d:ItemsSource="{d:SampleData ItemCount=5}" ItemStringFormat="G" AutoGeneratedColumns="DataGrid_AutoGeneratedColumns" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" CanUserDeleteRows="False" CanUserAddRows="False" AlternatingRowBackground="#3fff8f00"  CellStyle="{DynamicResource StkDataGridCellStyle}" ColumnHeaderStyle="{DynamicResource StkDataGridColumnHeaderStyleLeft}" RowStyle="{DynamicResource StkDataGridRowStyle}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="个股大单池" Height="30" Width="120">
+                        <Grid Background="#FFE5E5E5">
+                            <DataGrid x:Name="datagridStockAlertPool" BorderBrush="#FF77412F"  Background="#333333" ItemsSource="{Binding CurrentAlertList, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" d:ItemsSource="{d:SampleData ItemCount=5}" ItemStringFormat="G" AutoGeneratedColumns="DataGrid_AutoGeneratedColumns" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" CanUserDeleteRows="False" CanUserAddRows="False"  CellStyle="{DynamicResource StkDataGridCellStyle}" ColumnHeaderStyle="{DynamicResource StkDataGridColumnHeaderStyleLeft}" RowStyle="{DynamicResource StkDataGridRowStyle}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="总预警池" Height="30" Width="120">
+                        <Grid Background="#FFE5E5E5">
+                            <DataGrid x:Name="datagridAlertPool" BorderBrush="#FF77412F"  Background="#333333" ItemsSource="{Binding CurrentAlertPool, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" d:ItemsSource="{d:SampleData ItemCount=5}" ItemStringFormat="G" AutoGeneratedColumns="DataGrid_AutoGeneratedColumns" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" CanUserDeleteRows="False" CanUserAddRows="False"  CellStyle="{DynamicResource StkDataGridCellStyle}" ColumnHeaderStyle="{DynamicResource StkDataGridColumnHeaderStyleLeft}" RowStyle="{DynamicResource StkDataGridRowStyle}"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+        <Border x:Name="bdrBusyNote" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Grid.RowSpan="2" VerticalAlignment="Stretch" Background="#8F5F5F5F" Panel.ZIndex="10" Visibility="Hidden">
+            <Image gif:ImageBehavior.AnimatedSource="/loading.gif" gif:ImageBehavior.RepeatBehavior="Forever"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40">
+            </Image>
+        </Border>
+        <Label Content="{Binding SHReqResult, ElementName=mainWnd}" VerticalContentAlignment="Center" Foreground="IndianRed" HorizontalAlignment="Left" Margin="610,0,0,10" Grid.Row="1" FontSize="14" VerticalAlignment="Bottom" Width="300 "/>
+        <Label Content="{Binding SZReqResult, ElementName=mainWnd }" VerticalContentAlignment="Center"  Foreground="DarkCyan" HorizontalAlignment="Left" Margin="920,0,0,10" Grid.Row="1" FontSize="14" VerticalAlignment="Bottom" Width="300"/>
+
+    </Grid>
+</Window>

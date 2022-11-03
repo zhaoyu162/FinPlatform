@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinWPF", "FinWPF\FinWPF.csproj", "{186FEF7F-2357-416B-B7EB-C539E28CAA1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Debug|x64.ActiveCfg = Debug|x64
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Debug|x64.Build.0 = Debug|x64
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Release|x64.ActiveCfg = Release|x64
+		{186FEF7F-2357-416B-B7EB-C539E28CAA1F}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92D04D2B-BF4D-49DE-8A61-00C00E198B94}
+	EndGlobalSection
+EndGlobal

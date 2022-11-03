@@ -1,0 +1,14 @@
+﻿
+发生：Nested transactions are not supported.
+解决：安装mysql.data 6.8.10 以及mysql.data.entities 6.8.3
+
+fix memory usage
+memsql -p
+set @@global.maximum_table_memory=62259;
+select @@global.maximum_memory;
+
+docker管理
+docker stop memsql-ciab
+docker restart memsql-ciab
+
+docker rm memsql-ciab // remove

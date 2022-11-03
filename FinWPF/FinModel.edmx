@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="FinDBModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DealtByOrder">
+		  <Key>
+            <PropertyRef Name="DealtDate" />
+            <PropertyRef Name="SymbolCode" />
+            <PropertyRef Name="DealtId" />
+          </Key>
+          <Property Name="DealtDate" Type="date" Nullable="false"/>
+          <Property Name="SymbolId" Type="bigint" />
+          <Property Name="SymbolCode" Type="varchar" MaxLength="30" Nullable="false"/>
+          <Property Name="DealtTime" Type="time" Precision="0" />
+          <Property Name="DealtId" Type="bigint" Nullable="false"/>
+          <Property Name="DealtPrice" Type="float" />
+          <Property Name="DealtVol" Type="bigint" />
+          <Property Name="IsBuy" Type="bit" />
+          <Property Name="BuyOrderId" Type="varchar" MaxLength="30" />
+          <Property Name="BuyPrice" Type="float" />
+          <Property Name="SellOrderId" Type="varchar" MaxLength="30" />
+          <Property Name="SellPrice" Type="float" />
+          <Property Name="BuyVol" Type="bigint" />
+          <Property Name="SellVol" Type="bigint" />
+          <Property Name="BuyOrderState" Type="int" />
+          <Property Name="SellOrderState" Type="int" />
+        </EntityType>
+        <EntityType Name="RealtimeTick">
+		 <Key>
+            <PropertyRef Name="SymbolCode" />
+            <PropertyRef Name="TickTime" />
+          </Key>
+          <Property Name="SymbolID" Type="bigint" />
+          <Property Name="SymbolCode" Type="varchar" MaxLength="30"  Nullable="false"/>
+          <Property Name="SymbolName" Type="varchar" MaxLength="30" />
+          <Property Name="TickTime" Type="datetime" Precision="0" Nullable="false" />
+          <Property Name="OpenPrice" Type="double" />
+          <Property Name="ClosePrice" Type="double" />
+          <Property Name="HighPrice" Type="double" />
+          <Property Name="LowPrice" Type="double" />
+          <Property Name="DealtVol" Type="bigint" />
+          <Property Name="BuyPrices" Type="varchar" MaxLength="100" />
+          <Property Name="SellPrices" Type="varchar" MaxLength="100" />
+          <Property Name="BuyVolms" Type="varchar" MaxLength="100" />
+          <Property Name="SellVolms" Type="varchar" MaxLength="100" />
+          <Property Name="UpperLimitPrice" Type="double" />
+          <Property Name="LowerLimitPrice" Type="double" />
+          <Property Name="CurrVolm" Type="bigint" />
+        </EntityType>
+        <EntityType Name="Symbol">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StockSymbol" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Enabled" Type="bit" Nullable="false" />
+          <Property Name="StockName" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityContainer Name="FinDBModelStoreContainer">
+          <EntitySet Name="DealtByOrder" EntityType="Self.DealtByOrder" Schema="FinDB" store:Type="Tables" />
+          <EntitySet Name="RealtimeTick" EntityType="Self.RealtimeTick" Schema="FinDB" store:Type="Tables" />
+          <EntitySet Name="Symbol" EntityType="Self.Symbol" Schema="FinDB" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FinDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="RealtimeTick">
+          <Key>
+            <PropertyRef Name="SymbolCode" />
+            <PropertyRef Name="TickTime" />
+          </Key>
+          <Property Name="SymbolID" Type="Int64" Nullable="false" />
+          <Property Name="SymbolCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SymbolName" Type="String" MaxLength="30" FixedLength="false" Unicode="false"  />
+          <Property Name="TickTime" Type="DateTime" Nullable="false" />
+          <Property Name="OpenPrice" Type="Double" />
+          <Property Name="ClosePrice" Type="Double" />
+          <Property Name="HighPrice" Type="Double" />
+          <Property Name="LowPrice" Type="Double" />
+          <Property Name="DealtVol" Type="Int64" />
+          <Property Name="BuyPrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SellPrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BuyVolms" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SellVolms" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UpperLimitPrice" Type="Double" />
+          <Property Name="LowerLimitPrice" Type="Double" />
+          <Property Name="CurrVolm" Type="Int64" />
+        </EntityType>
+        <EntityType Name="Symbol">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="StockSymbol" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Enabled" Type="Boolean" Nullable="false" />
+          <Property Name="StockName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="FinDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="RealtimeTick" EntityType="Self.RealtimeTick" />
+          <EntitySet Name="Symbol" EntityType="Self.Symbol" />
+          <EntitySet Name="DealtByOrder" EntityType="FinDBModel.DealtByOrder" />
+        </EntityContainer>
+        <EntityType Name="DealtByOrder">
+          <Key>
+            <PropertyRef Name="DealtDate" />
+            <PropertyRef Name="SymbolCode" />
+            <PropertyRef Name="DealtId" />
+          </Key>
+          <Property Name="DealtDate" Type="DateTime" Nullable="false" />
+          <Property Name="SymbolId" Type="Int64" Nullable="false" />
+          <Property Name="SymbolCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DealtTime" Type="Time" />
+          <Property Name="DealtId" Type="Int64" Nullable="false" />
+          <Property Name="DealtPrice" Type="Single" />
+          <Property Name="DealtVol" Type="Int64" />
+          <Property Name="IsBuy" Type="Boolean" />
+          <Property Name="BuyOrderId" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="BuyPrice" Type="Single" />
+          <Property Name="SellOrderId" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="SellPrice" Type="Single" />
+          <Property Name="BuyVol" Type="Int64" />
+          <Property Name="SellVol" Type="Int64" />
+          <Property Name="BuyOrderState" Type="Int32" />
+          <Property Name="SellOrderState" Type="Int32" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FinDBModelStoreContainer" CdmEntityContainer="FinDBEntities">
+          <EntitySetMapping Name="RealtimeTick">
+            <EntityTypeMapping TypeName="FinDBModel.RealtimeTick">
+              <MappingFragment StoreEntitySet="RealtimeTick">
+                <ScalarProperty Name="SymbolID" ColumnName="SymbolID" />
+                <ScalarProperty Name="SymbolCode" ColumnName="SymbolCode" />
+                <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+                <ScalarProperty Name="TickTime" ColumnName="TickTime" />
+                <ScalarProperty Name="OpenPrice" ColumnName="OpenPrice" />
+                <ScalarProperty Name="ClosePrice" ColumnName="ClosePrice" />
+                <ScalarProperty Name="HighPrice" ColumnName="HighPrice" />
+                <ScalarProperty Name="LowPrice" ColumnName="LowPrice" />
+                <ScalarProperty Name="DealtVol" ColumnName="DealtVol" />
+                <ScalarProperty Name="BuyPrices" ColumnName="BuyPrices" />
+                <ScalarProperty Name="SellPrices" ColumnName="SellPrices" />
+                <ScalarProperty Name="BuyVolms" ColumnName="BuyVolms" />
+                <ScalarProperty Name="SellVolms" ColumnName="SellVolms" />
+                <ScalarProperty Name="UpperLimitPrice" ColumnName="UpperLimitPrice" />
+                <ScalarProperty Name="LowerLimitPrice" ColumnName="LowerLimitPrice" />
+                <ScalarProperty Name="CurrVolm" ColumnName="CurrVolm" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Symbol">
+            <EntityTypeMapping TypeName="FinDBModel.Symbol">
+              <MappingFragment StoreEntitySet="Symbol">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StockSymbol" ColumnName="StockSymbol" />
+                <ScalarProperty Name="Enabled" ColumnName="Enabled" />
+                <ScalarProperty Name="StockName" ColumnName="StockName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DealtByOrder">
+            <EntityTypeMapping TypeName="FinDBModel.DealtByOrder">
+              <MappingFragment StoreEntitySet="DealtByOrder">
+                <ScalarProperty Name="SellOrderState" ColumnName="SellOrderState" />
+                <ScalarProperty Name="BuyOrderState" ColumnName="BuyOrderState" />
+                <ScalarProperty Name="SellVol" ColumnName="SellVol" />
+                <ScalarProperty Name="BuyVol" ColumnName="BuyVol" />
+                <ScalarProperty Name="SellPrice" ColumnName="SellPrice" />
+                <ScalarProperty Name="SellOrderId" ColumnName="SellOrderId" />
+                <ScalarProperty Name="BuyPrice" ColumnName="BuyPrice" />
+                <ScalarProperty Name="BuyOrderId" ColumnName="BuyOrderId" />
+                <ScalarProperty Name="IsBuy" ColumnName="IsBuy" />
+                <ScalarProperty Name="DealtVol" ColumnName="DealtVol" />
+                <ScalarProperty Name="DealtPrice" ColumnName="DealtPrice" />
+                <ScalarProperty Name="DealtId" ColumnName="DealtId" />
+                <ScalarProperty Name="DealtTime" ColumnName="DealtTime" />
+                <ScalarProperty Name="SymbolCode" ColumnName="SymbolCode" />
+                <ScalarProperty Name="SymbolId" ColumnName="SymbolId" />
+                <ScalarProperty Name="DealtDate" ColumnName="DealtDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
